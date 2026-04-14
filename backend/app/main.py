@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers import avaliacao_pedido, consumidor, item_pedido, produto, pedido, consumidor, vendedor
 
 app = FastAPI(
@@ -18,6 +19,13 @@ app.include_router(vendedor.router)
 def health_check():
     return {"status": "ok", "message": "API rodando com sucesso!"}
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # porta padrão do Vite
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn
