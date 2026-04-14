@@ -130,7 +130,17 @@ cd frontend/sistema-compras
 pnpm install
 ```
 
-### 3. Iniciar o servidor de desenvolvimento
+### 3. Configurar variaveis de ambiente
+
+Crie um arquivo `.env` na pasta `frontend/sistema-compras/`:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+> Esta variavel define a URL base da API do backend. Certifique-se de que o backend esteja rodando na porta configurada.
+
+### 4. Iniciar o servidor de desenvolvimento
 
 ```bash
 pnpm dev
@@ -138,13 +148,13 @@ pnpm dev
 
 O frontend estara disponivel em: **http://localhost:5173**
 
-### Build para producao
+### 5. Build para producao
 
 ```bash
 pnpm build
 ```
 
-### Visualizar build de producao
+### 6. Visualizar build de producao
 
 ```bash
 pnpm preview
