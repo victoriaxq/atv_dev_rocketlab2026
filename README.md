@@ -59,10 +59,10 @@ Documentacao da API: `http://localhost:8000/docs`
 cd frontend
 
 # Instale as dependencias
-npm install
+pnpm install
 
 # Inicie o servidor de desenvolvimento
-npm run dev
+pnpm dev
 ```
 
 O frontend estara disponivel em `http://localhost:5173`
