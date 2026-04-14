@@ -43,10 +43,20 @@ export default function ProductFormPage() {
     { revalidateOnFocus: false }
   )
 
-  const { data: existingProduct, isLoading: isLoadingProduct } = useSWR(
+  const { data: existingProduct, isLoading: isLoadingProduct, error: loadError } = useSWR(
     id ? ['product', id] : null,
-    () => productsApi.getById(id!),
-    { revalidateOnFocus: false }
+    async () => {
+      try {
+        return await productsApi.getById(id!)
+      } catch (err) {
+        console.log('[v0] Error loading product for edit:', err)
+        throw err
+      }
+    },
+    { 
+      revalidateOnFocus: false,
+      shouldRetryOnError: false
+    }
   )
 
   useEffect(() => {
@@ -115,10 +125,12 @@ export default function ProductFormPage() {
 
       if (isEditing && id) {
         await productsApi.update(id, payload)
-        navigate(`/produto/${id}`)
+        navigate(`/produto/${id}`, { replace: true })
       } else {
         const created = await productsApi.create(payload as ProductCreate)
-        navigate(`/produto/${created.id_produto}`)
+        console.log('[v0] Product created:', created)
+        // Redireciona para a lista ao criar um novo produto
+        navigate('/', { replace: true })
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar produto')
@@ -130,6 +142,36 @@ export default function ProductFormPage() {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (isEditing && loadError) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <Link 
+          to="/"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar ao catalogo
+        </Link>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <AlertCircle className="h-12 w-12 text-destructive mb-4" />
+            <h3 className="text-lg font-semibold">Erro ao carregar produto</h3>
+            <p className="text-muted-foreground mt-1 text-center">
+              Nao foi possivel carregar as informacoes do produto para edicao.
+            </p>
+            <Button 
+              variant="outline" 
+              className="mt-4"
+              onClick={() => navigate('/')}
+            >
+              Voltar ao catalogo
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }

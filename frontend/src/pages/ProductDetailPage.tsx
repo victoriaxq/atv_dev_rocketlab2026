@@ -32,8 +32,18 @@ export default function ProductDetailPage() {
 
   const { data: product, error, isLoading } = useSWR(
     id ? ['product', id] : null,
-    () => productsApi.getById(id!),
-    { revalidateOnFocus: false }
+    async () => {
+      try {
+        return await productsApi.getById(id!)
+      } catch (err) {
+        console.log('[v0] Error fetching product:', err)
+        throw err
+      }
+    },
+    { 
+      revalidateOnFocus: false,
+      shouldRetryOnError: false
+    }
   )
 
   const handleDelete = async () => {
