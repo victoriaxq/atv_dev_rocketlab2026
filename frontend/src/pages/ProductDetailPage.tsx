@@ -193,7 +193,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center gap-2">
                     <StarRating rating={product.media_avaliacao} showValue />
                     <span className="text-sm text-muted-foreground">
-                      ({product.avaliacoes.length} avaliacoes)
+                      ({product.avaliacoes?.length || 0} avaliacoes)
                     </span>
                   </div>
                 )}
@@ -201,7 +201,7 @@ export default function ProductDetailPage() {
             </CardHeader>
             
             <CardContent>
-              {product.avaliacoes.length === 0 ? (
+              {!product.avaliacoes || product.avaliacoes.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Star className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>Nenhuma avaliacao para este produto</p>

@@ -24,7 +24,7 @@ export interface ProductDetail extends Product {
   media_avaliacao: number | null
   total_vendas: number
   receita_total: number
-  avaliacoes: Review[]
+  avaliacoes?: Review[]
 }
 
 export const fetcher = async (url: string) => {
