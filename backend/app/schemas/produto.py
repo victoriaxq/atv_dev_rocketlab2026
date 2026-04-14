@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, TypeVar, Generic
 from pydantic import BaseModel, ConfigDict
-import uuid
 
+T = TypeVar("T")
 
 class ProdutoBase(BaseModel):
     nome_produto: str
@@ -11,10 +11,8 @@ class ProdutoBase(BaseModel):
     altura_centimetros: Optional[float] = None
     largura_centimetros: Optional[float] = None
 
-
 class ProdutoCreate(ProdutoBase):
     pass  # id gerado no backend
-
 
 class ProdutoUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -32,6 +30,13 @@ class ProdutoRead(ProdutoBase):
 
     id_produto: str
 
+class ProdutoListResponse(BaseModel):
+    items: list[ProdutoRead]
+    total: int
+    
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
 
 class ProdutoDetail(ProdutoRead):
     model_config = ConfigDict(from_attributes=True)

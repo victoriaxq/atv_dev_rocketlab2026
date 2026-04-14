@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
@@ -10,27 +10,30 @@ from app.database import get_db
 from app.models.produto import Produto
 from app.models.item_pedido import ItemPedido
 from app.models.pedido import Pedido
-from app.schemas.produto import ProdutoCreate, ProdutoUpdate, ProdutoRead, ProdutoDetail
+from app.schemas.produto import ProdutoCreate, ProdutoListResponse, ProdutoUpdate, ProdutoRead, ProdutoDetail
 from app.schemas.avaliacao_pedido import AvaliacaoPedidoRead
 
 router = APIRouter(prefix="/produto", tags=["Produto"])
 
-@router.get("/", response_model=list[ProdutoRead])
+
+@router.get("/", response_model=ProdutoListResponse)
 def listar_produtos(
-    search: Optional[str] = Query(None, description="Busca por nome"),
-    categoria: Optional[str] = Query(None, description="Filtrar por categoria"),
+    search: Optional[str] = Query(None),
+    categoria: Optional[List[str]] = Query(None),
     skip: int = 0,
     limit: int = 20,
     db: Session = Depends(get_db),
 ):
     query = db.query(Produto)
-
     if search:
         query = query.filter(Produto.nome_produto.ilike(f"%{search}%"))
     if categoria:
-        query = query.filter(Produto.categoria_produto == categoria)
+        query = query.filter(Produto.categoria_produto.in_(categoria))
 
-    return query.offset(skip).limit(limit).all()
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+
+    return {"items": items, "total": total}
 
 
 @router.get("/categorias", response_model=list[str])
