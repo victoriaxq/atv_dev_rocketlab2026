@@ -1,7 +1,15 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from sqlalchemy import String, Float
 from sqlalchemy import String, Float, Integer, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.produto import Produto
+    from app.models.pedido import Pedido
+    from app.models.vendedor import Vendedor
 
 
 class ItemPedido(Base):
@@ -23,3 +31,7 @@ class ItemPedido(Base):
     __table_args__ = (
         PrimaryKeyConstraint("id_pedido", "id_item"),
     )
+    
+    produto: Mapped["Produto"] = relationship("Produto", back_populates="itens")
+    pedido: Mapped["Pedido"] = relationship("Pedido", back_populates="itens")
+    vendedor: Mapped["Vendedor"] = relationship("Vendedor", back_populates="itens")

@@ -1,10 +1,14 @@
-from typing import Optional
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
+
 
 from sqlalchemy import String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
+if TYPE_CHECKING:
+    from app.models.item_pedido import ItemPedido
 
 class Produto(Base):
     __tablename__ = "produtos"
@@ -16,4 +20,5 @@ class Produto(Base):
     comprimento_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     altura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     largura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-
+    
+    itens: Mapped[list["ItemPedido"]] = relationship("ItemPedido", back_populates="produto", passive_deletes=True)
